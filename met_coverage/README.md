@@ -40,11 +40,13 @@
 ## 5. 目录与运行
 
 ```
-bin/met_coverage.py     主程序（无第三方依赖）
-inputs/                 v1、v2（重述版）与两个资料错误样例
-out/<version>/          coverage.json（机器可读）、coverage.md（人读）、manifest.json
-tests/run_tests.py      端到端 + 独立复核（81 项）
-tests/random_diff.py    400 组随机图对暴力枚举的差分测试
+bin/met_coverage.py        覆盖核算主程序（无第三方依赖，原有入口与输出不变）
+bin/workorder_store.py     值班工单变更源（SQLite 本地持久化，可跨进程重启）
+inputs/                    v1、v2（重述版）与两个资料错误样例
+out/<version>/             coverage.json（机器可读）、coverage.md（人读）、manifest.json
+tests/run_tests.py         端到端 + 独立复核（81 项）
+tests/random_diff.py       400 组随机图对暴力枚举的差分测试
+tests/test_workorder_store.py  工单变更源测试（95 项）
 ```
 
 ```bash
@@ -55,7 +57,79 @@ python3 -I bin/met_coverage.py --input inputs/v2.json --out-root out
 # 验证
 python3 -I tests/run_tests.py
 python3 -I tests/random_diff.py
+python3 -I tests/test_workorder_store.py
 ```
+
+## 5b. 值班工单变更源（`workorder_store.py`）
+
+在覆盖核算产物之上，把逐小时的 `threshold_met` 流转为**持续观测断供工单**变更流，
+落在单个本地 SQLite 文件中，可跨进程重启继续使用。**原核算入口及其输出完全不变。**
+
+### 语义
+
+- 每次导入一份现有格式的 `coverage.json`，调用方另给**正整数发布序号 seq**
+  （全局唯一、越大越新、允许乱序送达）。
+- `results` 按 `unit_id` + `hour` 标识小时；无时区整点按 **UTC** 解释；只更新报告
+  列出的小时，每格以**收到的最高 seq** 为准（迟到的低 seq 重述不生效）。
+- `threshold_met` 只接受 `true` / `false` / `null`，**只有 `false` 算断供**；
+  达标、未核算（无格）、无阈值（`null`）都隔开前后的断供小时。
+- 一个单元内，每段**至少连续两小时的最大断供区间**对应一张工单：身份为
+  `(unit_id, start_hour)`，内容给出含首尾的 `[start_hour, end_hour]`；单小时
+  断供不成单。
+- 一份报告只发布整批前后的**净变化**：新身份或同身份区间变化发 `upsert`，
+  消失的身份发 `revoke`；同批按 `(unit_id, start_hour)` 排序。
+- 同序号重送**字节相同**的文件 => 幂等 no-op，不产生新变更；同序号不同文件、
+  报告内重复格、非字符串/空白单元标识、非无时区整点、非法判定值 => **整批拒绝**，
+  已有结果不变（退出码 2）。
+- 小时状态、断供区间、导入登记、变更日志在**同一事务**提交；中断重启后只可见
+  整批提交前或提交后的结果，重送可安全恢复。
+- 已发布变更的位置（日志自增 id，即游标）不随重启或重送变化。
+
+### 运行入口
+
+```bash
+# 导入（seq 由调用方分配；可乱序、可重跑）
+python3 -I bin/workorder_store.py import \
+    --db ./var/workorders.db \
+    --coverage out/v1/coverage.json --seq 1001
+
+# 下游从头/从上次游标限量读取；next_cursor 即续读游标，has_more 指示是否还有
+python3 -I bin/workorder_store.py read --db ./var/workorders.db \
+    --after-cursor 0 --limit 100
+python3 -I bin/workorder_store.py read --db ./var/workorders.db \
+    --after-cursor 100 --limit 100
+
+# 查看当前全部有效工单（运维用）
+python3 -I bin/workorder_store.py tickets --db ./var/workorders.db
+```
+
+`read` 返回：
+
+```json
+{
+  "changes": [
+    {"cursor": 1, "seq": 1001, "unit_id": "U1",
+     "start_hour": "2026-03-01T08:00", "end_hour": "2026-03-01T11:00",
+     "op": "upsert"},
+    {"cursor": 2, "seq": 1002, "unit_id": "U1",
+     "start_hour": "2026-03-01T08:00", "end_hour": null,
+     "op": "revoke"}
+  ],
+  "next_cursor": 2,
+  "has_more": false
+}
+```
+
+也可作为库嵌入：`WorkOrderStore(path).import_coverage_file(path, seq)` /
+`import_coverage_data(dict, seq)` / `read_changes(after_cursor, limit)`。
+
+### 多年历史下的增量代价
+
+- 断供区间以**区间行**存储（不是逐小时日志）：一次合并/拆分/伸缩只做按索引的
+  常数次行改动，**不逐小时扫描长断供**；
+- 小批回补只读取本批时间窗 ±1 小时内相交的区间，**不遍历无关历史**；
+- 变更日志追加写，游标读取走主键索引，读少量新变更**不重扫历史日志**
+  （测试以 5 年 × 10 单元 ≈ 43.8 万格验证：小批导入 SQL 次数为小常数且无全表扫描）。
 
 ## 6. 输入 JSON 字段
 
