@@ -1,0 +1,41 @@
+{
+  "version": "v2",
+  "restates": ["v1"],
+  "description": "示例 v2（重述版）：质量修订——OBS-04 经复核质量由 OK 改为 BAD；替代边 E4 在 09 点也已到期。仅重述受影响的 2026-03-01T09:00 各单元，v1 输出原样保留、不可覆盖。",
+  "notes": [
+    "重述触发条件：质量修订必须以新输入版重述受影响小时；本版只列 09 点。",
+    "重述后 09 点 U1、U2 均无任何合格观测，最大可证明覆盖数为 0，阈值不达标；Hall 见证给出空邻接证据。",
+    "旧版 v1 的结论仍可在 out/v1 中查阅，两版输入哈希不同、不可互相覆盖。"
+  ],
+  "reference_stations": [
+    {"id": "R1", "name": "基准站1", "position": [1, 1],
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"},
+    {"id": "R2", "name": "基准站2", "position": [4, 1],
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"},
+    {"id": "R3", "name": "基准站3", "position": [7, 1],
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"}
+  ],
+  "units": [
+    {"id": "U1", "name": "风险单元一", "polygon": [[0, 0], [9, 0], [9, 4], [0, 4]]},
+    {"id": "U2", "name": "风险单元二", "polygon": [[3, 0], [9, 0], [9, 4], [3, 4]]}
+  ],
+  "substitution_edges": [
+    {"id": "E1", "from": "R1", "to": "R2",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00",
+     "applies_to_units": ["U1", "U2"]},
+    {"id": "E2", "from": "R1", "to": "R3",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00",
+     "applies_to_units": ["U1"]},
+    {"id": "E4", "from": "R2", "to": "R3",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-03-01T09:00",
+     "applies_to_units": ["U2"]}
+  ],
+  "observations": [
+    {"id": "OBS-04", "station": "R3", "time": "2026-03-01T09:00", "quality": "BAD", "value": 15.9}
+  ],
+  "evaluate_hours": ["2026-03-01T09:00"],
+  "thresholds": [
+    {"unit": "U1", "hour": "2026-03-01T09:00", "required_coverage": 2},
+    {"unit": "U2", "hour": "2026-03-01T09:00", "required_coverage": 2}
+  ]
+}

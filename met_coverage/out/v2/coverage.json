@@ -1,0 +1,202 @@
+{
+  "schema": "met-coverage/v1",
+  "input_version": "v2",
+  "description": "示例 v2（重述版）：质量修订——OBS-04 经复核质量由 OK 改为 BAD；替代边 E4 在 09 点也已到期。仅重述受影响的 2026-03-01T09:00 各单元，v1 输出原样保留、不可覆盖。",
+  "restates": [
+    "v1"
+  ],
+  "generated_at": "2026-11-25T06:05:39",
+  "input_file": {
+    "path": "/workspace/met_coverage/inputs/v2.json",
+    "sha256": "d1590874d6df7c8d6f710acfd689da4255bab1c01d258da26709598e74944684"
+  },
+  "results": [
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U1",
+      "unit_name": "风险单元一",
+      "effective_stations": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3"
+        }
+      ],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        }
+      ],
+      "usable_observations": [],
+      "excluded_observations": [
+        {
+          "observation_id": "OBS-04",
+          "station": "R3",
+          "reason": "质量 'BAD' 不合格（零值本身可用，质量标记不合格才排除）"
+        }
+      ],
+      "bipartite_adjacency": {
+        "R1": [],
+        "R2": [],
+        "R3": []
+      },
+      "maximum_provable_coverage": 0,
+      "effective_station_count": 3,
+      "assignments": [],
+      "augmentation_log": [
+        {
+          "station": "R1",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        },
+        {
+          "station": "R2",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        },
+        {
+          "station": "R3",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "deficiency": 3,
+        "residual_reachable_left": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "residual_reachable_right": [],
+        "min_vertex_cover": {
+          "left_stations": [],
+          "right_observations": []
+        },
+        "cover_size": 0,
+        "matching_size": 0,
+        "hall_witness": {
+          "station_subset_ZL": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "neighbor_observations_N_ZL": [],
+          "inequality": "|N(Z_L)| = 0 < |Z_L| = 3",
+          "explanation": "Hall 条件被违反：该站集的全部可达合格观测数少于站数，故至少有 3 个站无法被认领；最小顶点覆盖规模等于匹配规模，证明匹配已最大、不可增广。"
+        }
+      },
+      "threshold_required": 2,
+      "threshold_met": false
+    },
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U2",
+      "unit_name": "风险单元二",
+      "effective_stations": [
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [
+        "R1"
+      ],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2",
+          "reason": "源基准站 R1 该小时不在本单元有效站集合内，边对本单元不可用"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        },
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3",
+          "reason": "该小时不在边有效期内（替代到期）"
+        }
+      ],
+      "usable_observations": [],
+      "excluded_observations": [
+        {
+          "observation_id": "OBS-04",
+          "station": "R3",
+          "reason": "质量 'BAD' 不合格（零值本身可用，质量标记不合格才排除）"
+        }
+      ],
+      "bipartite_adjacency": {
+        "R2": [],
+        "R3": []
+      },
+      "maximum_provable_coverage": 0,
+      "effective_station_count": 2,
+      "assignments": [],
+      "augmentation_log": [
+        {
+          "station": "R2",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        },
+        {
+          "station": "R3",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [
+          "R2",
+          "R3"
+        ],
+        "deficiency": 2,
+        "residual_reachable_left": [
+          "R2",
+          "R3"
+        ],
+        "residual_reachable_right": [],
+        "min_vertex_cover": {
+          "left_stations": [],
+          "right_observations": []
+        },
+        "cover_size": 0,
+        "matching_size": 0,
+        "hall_witness": {
+          "station_subset_ZL": [
+            "R2",
+            "R3"
+          ],
+          "neighbor_observations_N_ZL": [],
+          "inequality": "|N(Z_L)| = 0 < |Z_L| = 2",
+          "explanation": "Hall 条件被违反：该站集的全部可达合格观测数少于站数，故至少有 2 个站无法被认领；最小顶点覆盖规模等于匹配规模，证明匹配已最大、不可增广。"
+        }
+      },
+      "threshold_required": 2,
+      "threshold_met": false
+    }
+  ]
+}

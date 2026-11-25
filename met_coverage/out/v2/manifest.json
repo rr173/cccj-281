@@ -1,0 +1,30 @@
+{
+  "version": "v2",
+  "restates": [
+    "v1"
+  ],
+  "input_sha256": "d1590874d6df7c8d6f710acfd689da4255bab1c01d258da26709598e74944684",
+  "outputs": [
+    "coverage.json",
+    "coverage.md"
+  ],
+  "unit_hour_cells": 2,
+  "cells_below_threshold": [
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U1",
+      "achieved": 0,
+      "required": 2
+    },
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U2",
+      "achieved": 0,
+      "required": 2
+    }
+  ],
+  "generated_at": "2026-11-25T06:05:39",
+  "prior_versions_preserved": [
+    "v1"
+  ]
+}

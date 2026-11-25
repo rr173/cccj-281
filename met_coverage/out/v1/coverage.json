@@ -1,0 +1,591 @@
+{
+  "schema": "met-coverage/v1",
+  "input_version": "v1",
+  "description": "示例 v1：两个气象风险单元、3 个基准站；含多基准站竞争同一替代源、有向替代路径、贪心陷阱与增广重配、替代到期、零值、质量不合格、跨单元独立核算等场景。",
+  "restates": [],
+  "generated_at": "2026-11-25T06:05:39",
+  "input_file": {
+    "path": "/workspace/met_coverage/inputs/v1.json",
+    "sha256": "5d692779eab1cfbcdb38729eaed497367b590800b429aeba70f833f236a75c7e"
+  },
+  "results": [
+    {
+      "hour": "2026-03-01T08:00",
+      "unit_id": "U1",
+      "unit_name": "风险单元一",
+      "effective_stations": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3"
+        }
+      ],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        }
+      ],
+      "usable_observations": [
+        {
+          "id": "OBS-06",
+          "station": "R2",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 0
+        },
+        {
+          "id": "OBS-07",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 8.1
+        },
+        {
+          "id": "OBS-09",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 5.5
+        },
+        {
+          "id": "OBS-10",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 6.2
+        }
+      ],
+      "excluded_observations": [
+        {
+          "observation_id": "OBS-05",
+          "station": "R1",
+          "reason": "质量 'BAD' 不合格（零值本身可用，质量标记不合格才排除）"
+        }
+      ],
+      "bipartite_adjacency": {
+        "R1": [
+          "OBS-06",
+          "OBS-07",
+          "OBS-09",
+          "OBS-10"
+        ],
+        "R2": [
+          "OBS-06"
+        ],
+        "R3": [
+          "OBS-07",
+          "OBS-09",
+          "OBS-10"
+        ]
+      },
+      "maximum_provable_coverage": 3,
+      "effective_station_count": 3,
+      "assignments": [
+        {
+          "reference_station": "R1",
+          "reference_station_name": "基准站1",
+          "physical_observation_id": "OBS-07",
+          "actual_station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 8.1,
+          "chain_kind": "替代链",
+          "directed_chain_stations": [
+            "R1",
+            "R3"
+          ],
+          "directed_chain_edges": [
+            "E2"
+          ]
+        },
+        {
+          "reference_station": "R2",
+          "reference_station_name": "基准站2",
+          "physical_observation_id": "OBS-06",
+          "actual_station": "R2",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 0,
+          "chain_kind": "自身观测(长度0链)",
+          "directed_chain_stations": [
+            "R2"
+          ],
+          "directed_chain_edges": []
+        },
+        {
+          "reference_station": "R3",
+          "reference_station_name": "基准站3",
+          "physical_observation_id": "OBS-09",
+          "actual_station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 5.5,
+          "chain_kind": "自身观测(长度0链)",
+          "directed_chain_stations": [
+            "R3"
+          ],
+          "directed_chain_edges": []
+        }
+      ],
+      "augmentation_log": [
+        {
+          "station": "R1",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-06"
+          ],
+          "reassignments": []
+        },
+        {
+          "station": "R2",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-06",
+            "OBS-07"
+          ],
+          "reassignments": [
+            {
+              "observation": "OBS-06",
+              "from_station": "R1",
+              "to_station": "R2"
+            }
+          ]
+        },
+        {
+          "station": "R3",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-09"
+          ],
+          "reassignments": []
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [],
+        "deficiency": 0,
+        "residual_reachable_left": [],
+        "residual_reachable_right": [],
+        "min_vertex_cover": {
+          "left_stations": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "right_observations": []
+        },
+        "cover_size": 3,
+        "matching_size": 3,
+        "hall_witness": null
+      },
+      "threshold_required": 3,
+      "threshold_met": true
+    },
+    {
+      "hour": "2026-03-01T08:00",
+      "unit_id": "U2",
+      "unit_name": "风险单元二",
+      "effective_stations": [
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [
+        "R1"
+      ],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3"
+        }
+      ],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2",
+          "reason": "源基准站 R1 该小时不在本单元有效站集合内，边对本单元不可用"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        }
+      ],
+      "usable_observations": [
+        {
+          "id": "OBS-06",
+          "station": "R2",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 0
+        },
+        {
+          "id": "OBS-07",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 8.1
+        },
+        {
+          "id": "OBS-09",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 5.5
+        },
+        {
+          "id": "OBS-10",
+          "station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 6.2
+        }
+      ],
+      "excluded_observations": [
+        {
+          "observation_id": "OBS-05",
+          "station": "R1",
+          "reason": "质量 'BAD' 不合格（零值本身可用，质量标记不合格才排除）"
+        }
+      ],
+      "bipartite_adjacency": {
+        "R2": [
+          "OBS-06",
+          "OBS-07",
+          "OBS-09",
+          "OBS-10"
+        ],
+        "R3": [
+          "OBS-07",
+          "OBS-09",
+          "OBS-10"
+        ]
+      },
+      "maximum_provable_coverage": 2,
+      "effective_station_count": 2,
+      "assignments": [
+        {
+          "reference_station": "R2",
+          "reference_station_name": "基准站2",
+          "physical_observation_id": "OBS-06",
+          "actual_station": "R2",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 0,
+          "chain_kind": "自身观测(长度0链)",
+          "directed_chain_stations": [
+            "R2"
+          ],
+          "directed_chain_edges": []
+        },
+        {
+          "reference_station": "R3",
+          "reference_station_name": "基准站3",
+          "physical_observation_id": "OBS-07",
+          "actual_station": "R3",
+          "time": "2026-03-01T08:00",
+          "quality": "OK",
+          "value": 8.1,
+          "chain_kind": "自身观测(长度0链)",
+          "directed_chain_stations": [
+            "R3"
+          ],
+          "directed_chain_edges": []
+        }
+      ],
+      "augmentation_log": [
+        {
+          "station": "R2",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-06"
+          ],
+          "reassignments": []
+        },
+        {
+          "station": "R3",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-07"
+          ],
+          "reassignments": []
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [],
+        "deficiency": 0,
+        "residual_reachable_left": [],
+        "residual_reachable_right": [],
+        "min_vertex_cover": {
+          "left_stations": [
+            "R2",
+            "R3"
+          ],
+          "right_observations": []
+        },
+        "cover_size": 2,
+        "matching_size": 2,
+        "hall_witness": null
+      },
+      "threshold_required": 2,
+      "threshold_met": true
+    },
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U1",
+      "unit_name": "风险单元一",
+      "effective_stations": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3"
+        }
+      ],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        }
+      ],
+      "usable_observations": [
+        {
+          "id": "OBS-04",
+          "station": "R3",
+          "time": "2026-03-01T09:00",
+          "quality": "OK",
+          "value": 15.9
+        }
+      ],
+      "excluded_observations": [],
+      "bipartite_adjacency": {
+        "R1": [
+          "OBS-04"
+        ],
+        "R2": [],
+        "R3": [
+          "OBS-04"
+        ]
+      },
+      "maximum_provable_coverage": 1,
+      "effective_station_count": 3,
+      "assignments": [
+        {
+          "reference_station": "R1",
+          "reference_station_name": "基准站1",
+          "physical_observation_id": "OBS-04",
+          "actual_station": "R3",
+          "time": "2026-03-01T09:00",
+          "quality": "OK",
+          "value": 15.9,
+          "chain_kind": "替代链",
+          "directed_chain_stations": [
+            "R1",
+            "R3"
+          ],
+          "directed_chain_edges": [
+            "E2"
+          ]
+        }
+      ],
+      "augmentation_log": [
+        {
+          "station": "R1",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-04"
+          ],
+          "reassignments": []
+        },
+        {
+          "station": "R2",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        },
+        {
+          "station": "R3",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [
+          "R2",
+          "R3"
+        ],
+        "deficiency": 2,
+        "residual_reachable_left": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "residual_reachable_right": [
+          "OBS-04"
+        ],
+        "min_vertex_cover": {
+          "left_stations": [],
+          "right_observations": [
+            "OBS-04"
+          ]
+        },
+        "cover_size": 1,
+        "matching_size": 1,
+        "hall_witness": {
+          "station_subset_ZL": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "neighbor_observations_N_ZL": [
+            "OBS-04"
+          ],
+          "inequality": "|N(Z_L)| = 1 < |Z_L| = 3",
+          "explanation": "Hall 条件被违反：该站集的全部可达合格观测数少于站数，故至少有 2 个站无法被认领；最小顶点覆盖规模等于匹配规模，证明匹配已最大、不可增广。"
+        }
+      },
+      "threshold_required": 2,
+      "threshold_met": false
+    },
+    {
+      "hour": "2026-03-01T09:00",
+      "unit_id": "U2",
+      "unit_name": "风险单元二",
+      "effective_stations": [
+        "R2",
+        "R3"
+      ],
+      "stations_outside_polygon": [
+        "R1"
+      ],
+      "stations_expired_at_hour": [],
+      "active_substitution_edges": [],
+      "excluded_substitution_edges": [
+        {
+          "edge_id": "E1",
+          "from": "R1",
+          "to": "R2",
+          "reason": "源基准站 R1 该小时不在本单元有效站集合内，边对本单元不可用"
+        },
+        {
+          "edge_id": "E2",
+          "from": "R1",
+          "to": "R3",
+          "reason": "不适用于该单元"
+        },
+        {
+          "edge_id": "E4",
+          "from": "R2",
+          "to": "R3",
+          "reason": "该小时不在边有效期内（替代到期）"
+        }
+      ],
+      "usable_observations": [
+        {
+          "id": "OBS-04",
+          "station": "R3",
+          "time": "2026-03-01T09:00",
+          "quality": "OK",
+          "value": 15.9
+        }
+      ],
+      "excluded_observations": [],
+      "bipartite_adjacency": {
+        "R2": [],
+        "R3": [
+          "OBS-04"
+        ]
+      },
+      "maximum_provable_coverage": 1,
+      "effective_station_count": 2,
+      "assignments": [
+        {
+          "reference_station": "R3",
+          "reference_station_name": "基准站3",
+          "physical_observation_id": "OBS-04",
+          "actual_station": "R3",
+          "time": "2026-03-01T09:00",
+          "quality": "OK",
+          "value": 15.9,
+          "chain_kind": "自身观测(长度0链)",
+          "directed_chain_stations": [
+            "R3"
+          ],
+          "directed_chain_edges": []
+        }
+      ],
+      "augmentation_log": [
+        {
+          "station": "R2",
+          "augmented": false,
+          "reason": "残差 BFS 穷尽仍无空闲可达观测（该站在当前最大匹配下无法再增广）"
+        },
+        {
+          "station": "R3",
+          "augmented": true,
+          "augmenting_path_observations": [
+            "OBS-04"
+          ],
+          "reassignments": []
+        }
+      ],
+      "maximality_certificate": {
+        "unmatched_stations": [
+          "R2"
+        ],
+        "deficiency": 1,
+        "residual_reachable_left": [
+          "R2"
+        ],
+        "residual_reachable_right": [],
+        "min_vertex_cover": {
+          "left_stations": [
+            "R3"
+          ],
+          "right_observations": []
+        },
+        "cover_size": 1,
+        "matching_size": 1,
+        "hall_witness": {
+          "station_subset_ZL": [
+            "R2"
+          ],
+          "neighbor_observations_N_ZL": [],
+          "inequality": "|N(Z_L)| = 0 < |Z_L| = 1",
+          "explanation": "Hall 条件被违反：该站集的全部可达合格观测数少于站数，故至少有 1 个站无法被认领；最小顶点覆盖规模等于匹配规模，证明匹配已最大、不可增广。"
+        }
+      },
+      "threshold_required": 2,
+      "threshold_met": false
+    }
+  ]
+}

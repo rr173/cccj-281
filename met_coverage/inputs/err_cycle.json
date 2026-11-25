@@ -1,0 +1,27 @@
+{
+  "version": "err-cycle",
+  "description": "资料错误样例：核准替代边在单元 U1 内构成有向环 R1→R2→R3→R1，必须拒绝。",
+  "reference_stations": [
+    {"id": "R1", "position": [1, 1], "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"},
+    {"id": "R2", "position": [4, 1], "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"},
+    {"id": "R3", "position": [7, 1], "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00"}
+  ],
+  "units": [
+    {"id": "U1", "name": "风险单元一", "polygon": [[0, 0], [9, 0], [9, 4], [0, 4]]}
+  ],
+  "substitution_edges": [
+    {"id": "C1", "from": "R1", "to": "R2",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00", "applies_to_units": ["U1"]},
+    {"id": "C2", "from": "R2", "to": "R3",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00", "applies_to_units": ["U1"]},
+    {"id": "C3", "from": "R3", "to": "R1",
+     "valid_from": "2026-03-01T00:00", "valid_to": "2026-04-01T00:00", "applies_to_units": ["U1"]}
+  ],
+  "observations": [
+    {"id": "OBS-X", "station": "R3", "time": "2026-03-01T08:00", "quality": "OK", "value": 1.0}
+  ],
+  "evaluate_hours": ["2026-03-01T08:00"],
+  "thresholds": [
+    {"unit": "U1", "hour": "2026-03-01T08:00", "required_coverage": 1}
+  ]
+}
